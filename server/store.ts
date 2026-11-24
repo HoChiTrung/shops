@@ -4,6 +4,7 @@ import path from 'node:path';
 import {
   buildSku,
   formatOrderMessengerText,
+  normalizeOrderStatus,
   normalizePhone,
   normalizeSkuToken,
   type AgentNotification,
@@ -283,9 +284,9 @@ function createInitialSeedData(): DatabaseSchema {
         customerPhone: '0912345678',
         customerAddress: '120 Cầu Giấy, Hà Nội',
         customerNote: '',
-        status: 'shipping',
-        trackingCode: 'GHTK849201',
-        adminNote: 'Đã gửi bưu cục buổi sáng',
+        status: 'completed',
+        trackingCode: '',
+        adminNote: 'Đã xác nhận và xử lý đơn',
         totalAmount: 279000,
         messengerText: order2Text,
         createdAt: oneDayAgo,
@@ -370,6 +371,15 @@ class MultiTenantStore {
               dirty = true;
             }
           }
+          if (Array.isArray(parsed.orders)) {
+            for (const order of parsed.orders) {
+              const normalized = normalizeOrderStatus(String(order.status ?? 'new'));
+              if (order.status !== normalized) {
+                order.status = normalized;
+                dirty = true;
+              }
+            }
+          }
           const hydrated = parsed as DatabaseSchema;
           if (dirty) {
             this.saveData(hydrated);
@@ -444,7 +454,10 @@ class MultiTenantStore {
       users: pgState.users,
       products: pgState.products,
       variants: pgState.variants,
-      orders: pgState.orders,
+      orders: pgState.orders.map((o) => ({
+        ...o,
+        status: normalizeOrderStatus(String(o.status ?? 'new')),
+      })),
       orderItems: pgState.orderItems,
       agentNotifications: pgState.agentNotifications,
     };
@@ -996,6 +1009,29 @@ class MultiTenantStore {
 
     const items = this.data.orderItems.filter((i) => i.shopId === shopId && i.orderId === order.id);
     return { ...order, items };
+  }
+
+  bulkUpdateOrdersStatus(shopId: string, orderIds: string[], status: OrderStatus): Order[] {
+    const idSet = new Set(orderIds);
+    const now = new Date().toISOString();
+    const updatedOrders: Order[] = [];
+
+    for (const order of this.data.orders) {
+      if (order.shopId === shopId && idSet.has(order.id)) {
+        order.status = status;
+        order.updatedAt = now;
+        const items = this.data.orderItems.filter(
+          (i) => i.shopId === shopId && i.orderId === order.id
+        );
+        updatedOrders.push({ ...order, items });
+      }
+    }
+
+    if (updatedOrders.length > 0) {
+      this.persist();
+    }
+
+    return updatedOrders;
   }
 
   // ---- Super Admin (NEVER touches orders or orderItems!) ----

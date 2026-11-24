@@ -158,7 +158,6 @@ export const api = {
     orderId: string,
     payload: {
       status?: OrderStatus;
-      trackingCode?: string;
       adminNote?: string;
     }
   ) =>
@@ -166,6 +165,20 @@ export const api = {
       `/api/admin/shops/${encodeURIComponent(shopId)}/orders/${encodeURIComponent(orderId)}`,
       {
         method: 'PATCH',
+        body: JSON.stringify(payload),
+      }
+    ),
+  bulkUpdateOrderStatus: (
+    shopId: string,
+    payload: {
+      orderIds: string[];
+      status: OrderStatus;
+    }
+  ) =>
+    request<{ orders: Order[]; updatedCount: number }>(
+      `/api/admin/shops/${encodeURIComponent(shopId)}/orders/bulk-status`,
+      {
+        method: 'POST',
         body: JSON.stringify(payload),
       }
     ),

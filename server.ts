@@ -23,13 +23,7 @@ import { pgBridge } from './server/pg-bridge.ts';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const ALLOWED_ORDER_STATUSES: OrderStatus[] = [
-  'new',
-  'confirmed',
-  'shipping',
-  'completed',
-  'cancelled',
-];
+const ALLOWED_ORDER_STATUSES: OrderStatus[] = ['new', 'completed'];
 
 function extractAgentCredentials(req: Request): {
   apiKey: string | null;
@@ -628,6 +622,59 @@ async function startServer() {
         res.json({ order });
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : 'Không thể cập nhật đơn hàng.';
+        res.status(400).json({ error: message });
+      }
+    }
+  );
+
+  app.post(
+    '/api/admin/shops/:shopId/orders/bulk-status',
+    requireAuth,
+    requireShopAccess,
+    async (req, res) => {
+      try {
+        const { orderIds, status } = req.body ?? {};
+        if (!Array.isArray(orderIds) || orderIds.length === 0 || orderIds.length > 500) {
+          res.status(400).json({ error: 'Vui lòng chọn ít nhất 1 đơn hàng để cập nhật.' });
+          return;
+        }
+        const cleanIds = Array.from(
+          new Set(
+            orderIds.filter((id): id is string => typeof id === 'string' && id.trim().length > 0)
+          )
+        );
+        if (cleanIds.length === 0) {
+          res.status(400).json({ error: 'Danh sách đơn hàng không hợp lệ.' });
+          return;
+        }
+        if (typeof status !== 'string' || !ALLOWED_ORDER_STATUSES.includes(status as OrderStatus)) {
+          res.status(400).json({ error: 'Trạng thái đơn hàng không hợp lệ.' });
+          return;
+        }
+
+        const nextStatus = status as OrderStatus;
+        const updatedOrders = store.bulkUpdateOrdersStatus(
+          req.params.shopId,
+          cleanIds,
+          nextStatus
+        );
+        const shop = store.getShopById(req.params.shopId);
+        if (shop && updatedOrders.length > 0) {
+          await pgBridge.bulkUpdateOrderStatus({
+            shopSlug: shop.slug,
+            orderIds: updatedOrders.map((o) => o.id),
+            status: nextStatus,
+            updatedAt: updatedOrders[0].updatedAt,
+          });
+        }
+
+        res.json({
+          orders: updatedOrders,
+          updatedCount: updatedOrders.length,
+        });
+      } catch (error: unknown) {
+        const message =
+          error instanceof Error ? error.message : 'Không thể cập nhật hàng loạt đơn hàng.';
         res.status(400).json({ error: message });
       }
     }

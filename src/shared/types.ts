@@ -1,16 +1,15 @@
 export type UserRole = 'super_admin' | 'shop_owner' | 'shop_staff';
 
-export type OrderStatus = 'new' | 'confirmed' | 'shipping' | 'completed' | 'cancelled';
+export type OrderStatus = 'new' | 'completed';
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
-  new: 'Mới đặt',
-  confirmed: 'Đã chốt',
-  shipping: 'Đang giao',
-  completed: 'Hoàn tất',
-  cancelled: 'Đã hủy',
+  new: 'Chưa xử lý',
+  completed: 'Đã xử lý',
 };
 
-export const UNFINISHED_STATUSES: OrderStatus[] = ['new', 'confirmed', 'shipping'];
+export function normalizeOrderStatus(status: string): OrderStatus {
+  return status === 'completed' ? 'completed' : 'new';
+}
 
 export type AgentDeliveryStatus = 'pending' | 'delivered' | 'acked' | 'failed';
 

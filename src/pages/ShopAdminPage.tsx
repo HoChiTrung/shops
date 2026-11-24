@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Check,
+  CheckCheck,
   ChevronDown,
   ChevronUp,
   Copy,
@@ -8,6 +9,7 @@ import {
   Eye,
   EyeOff,
   Plus,
+  RotateCcw,
   Search,
   Trash2,
   X,
@@ -16,7 +18,6 @@ import {
   formatVnd,
   normalizeSkuToken,
   ORDER_STATUS_LABELS,
-  UNFINISHED_STATUSES,
   type Order,
   type OrderStatus,
   type Product,
@@ -41,56 +42,60 @@ const DEFAULT_COLORS: ProductColorOption[] = [
   { name: 'Xám', code: 'XAM', hex: '#9CA3AF' },
 ];
 
-type OrderFilter = 'unfinished' | 'all' | OrderStatus;
-
-const ORDER_FILTERS: Array<{ value: OrderFilter; label: string }> = [
-  { value: 'unfinished', label: 'Chưa xử lý xong' },
-  { value: 'all', label: 'Tất cả' },
-  { value: 'new', label: 'Mới đặt' },
-  { value: 'confirmed', label: 'Đã chốt' },
-  { value: 'shipping', label: 'Đang giao' },
-  { value: 'completed', label: 'Hoàn tất' },
-  { value: 'cancelled', label: 'Đã hủy' },
+const ORDER_FILTERS: Array<{ value: OrderStatus; label: string }> = [
+  { value: 'new', label: 'Chưa xử lý' },
+  { value: 'completed', label: 'Đã xử lý' },
 ];
 
 function OrderRow({
   order,
+  selected,
+  onToggleSelect,
+  onQuickStatusChange,
   onSave,
 }: {
   order: Order;
+  selected: boolean;
+  onToggleSelect: (orderId: string) => void;
+  onQuickStatusChange: (orderId: string, nextStatus: OrderStatus) => Promise<void>;
   onSave: (
     orderId: string,
-    payload: { status: OrderStatus; trackingCode: string; adminNote: string }
+    payload: { status: OrderStatus; adminNote: string }
   ) => Promise<void>;
 }) {
   const { showToast } = useToast();
   const [expanded, setExpanded] = useState(false);
   const [status, setStatus] = useState<OrderStatus>(order.status);
-  const [trackingCode, setTrackingCode] = useState(order.trackingCode);
   const [adminNote, setAdminNote] = useState(order.adminNote);
   const [saving, setSaving] = useState(false);
+  const [quickSaving, setQuickSaving] = useState(false);
 
   useEffect(() => {
     setStatus(order.status);
-    setTrackingCode(order.trackingCode);
     setAdminNote(order.adminNote);
   }, [order]);
 
-  const dirty =
-    status !== order.status ||
-    trackingCode.trim() !== order.trackingCode ||
-    adminNote.trim() !== order.adminNote;
+  const dirty = status !== order.status || adminNote.trim() !== order.adminNote;
 
   const handleSave = async () => {
     setSaving(true);
     try {
       await onSave(order.id, {
         status,
-        trackingCode: trackingCode.trim(),
         adminNote: adminNote.trim(),
       });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleQuickToggle = async () => {
+    setQuickSaving(true);
+    try {
+      const nextStatus: OrderStatus = order.status === 'new' ? 'completed' : 'new';
+      await onQuickStatusChange(order.id, nextStatus);
+    } finally {
+      setQuickSaving(false);
     }
   };
 
@@ -101,65 +106,110 @@ function OrderRow({
 
   const statusTextColor: Record<OrderStatus, string> = {
     new: 'text-amber-700',
-    confirmed: 'text-blue-700',
-    shipping: 'text-indigo-700',
     completed: 'text-emerald-700',
-    cancelled: 'text-red-700',
   };
 
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white">
-      <button
-        type="button"
-        onClick={() => setExpanded((v) => !v)}
-        className="flex w-full items-center justify-between gap-4 px-4 py-3.5 text-left transition-colors hover:bg-zinc-50/70"
-      >
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5">
-            <span className="font-mono text-sm font-bold text-zinc-900">{order.orderCode}</span>
-            <span aria-hidden="true" className="text-zinc-300">
-              ·
-            </span>
-            <span className={`text-xs font-semibold ${statusTextColor[order.status]}`}>
-              {ORDER_STATUS_LABELS[order.status]}
-            </span>
-            <span aria-hidden="true" className="text-zinc-300">
-              ·
-            </span>
-            <span className="truncate text-sm font-medium text-zinc-800">{order.customerName}</span>
-            <span className="font-mono text-xs text-zinc-500">{order.customerPhone}</span>
-          </div>
-          <p className="mt-1 truncate text-xs text-zinc-500">
-            {order.items
-              .map((i) => `${i.productName} (${i.colorName}/${i.size}) ×${i.quantity}`)
-              .join(', ')}
-            {order.trackingCode ? ` · Vận đơn: ${order.trackingCode}` : ''}
-          </p>
-        </div>
+    <div
+      className={`rounded-xl border transition-colors ${
+        selected ? 'border-zinc-900 bg-zinc-50/70' : 'border-zinc-200 bg-white'
+      }`}
+    >
+      <div className="flex items-center">
+        {/* Checkbox for bulk selection */}
+        <label
+          className="flex min-h-[56px] shrink-0 cursor-pointer items-center justify-center pr-1 pl-4"
+          aria-label={`Chọn đơn ${order.orderCode}`}
+        >
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={() => onToggleSelect(order.id)}
+            className="h-4 w-4 cursor-pointer rounded border-zinc-300 accent-zinc-900"
+          />
+        </label>
 
-        <div className="flex shrink-0 items-center gap-3">
-          <div className="text-right">
-            <p className="font-mono text-sm font-bold tabular-nums text-zinc-900">
-              {formatVnd(order.totalAmount)}
-            </p>
-            <p className="text-[11px] text-zinc-400">
-              {new Date(order.createdAt).toLocaleDateString('vi-VN')}
+        {/* Main clickable row summary */}
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="flex min-w-0 flex-1 items-center justify-between gap-3 py-3.5 pr-3 pl-2 text-left transition-colors hover:bg-zinc-50/70"
+        >
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5">
+              <span className="font-mono text-sm font-bold text-zinc-900">{order.orderCode}</span>
+              <span aria-hidden="true" className="text-zinc-300">
+                ·
+              </span>
+              <span className={`text-xs font-semibold ${statusTextColor[order.status]}`}>
+                {ORDER_STATUS_LABELS[order.status]}
+              </span>
+              <span aria-hidden="true" className="text-zinc-300">
+                ·
+              </span>
+              <span className="truncate text-sm font-medium text-zinc-800">
+                {order.customerName}
+              </span>
+              <span className="font-mono text-xs text-zinc-500">{order.customerPhone}</span>
+            </div>
+            <p className="mt-1 truncate text-xs text-zinc-500">
+              {order.items
+                .map((i) => `${i.productName} (${i.colorName}/${i.size}) ×${i.quantity}`)
+                .join(', ')}
+              {order.adminNote ? ` · Ghi chú: ${order.adminNote}` : ''}
             </p>
           </div>
-          {expanded ? (
-            <ChevronUp className="h-4 w-4 text-zinc-400" />
-          ) : (
-            <ChevronDown className="h-4 w-4 text-zinc-400" />
-          )}
+
+          <div className="flex shrink-0 items-center gap-3">
+            <div className="text-right">
+              <p className="font-mono text-sm font-bold tabular-nums text-zinc-900">
+                {formatVnd(order.totalAmount)}
+              </p>
+              <p className="text-[11px] text-zinc-400">
+                {new Date(order.createdAt).toLocaleDateString('vi-VN')}
+              </p>
+            </div>
+            {expanded ? (
+              <ChevronUp className="h-4 w-4 text-zinc-400" />
+            ) : (
+              <ChevronDown className="h-4 w-4 text-zinc-400" />
+            )}
+          </div>
+        </button>
+
+        {/* Quick 1-click status toggle on larger screens */}
+        <div className="hidden shrink-0 pr-3.5 sm:block">
+          <button
+            type="button"
+            disabled={quickSaving}
+            onClick={handleQuickToggle}
+            className={`inline-flex min-h-[34px] items-center gap-1.5 whitespace-nowrap rounded-lg border px-2.5 text-xs font-medium transition-colors disabled:opacity-50 ${
+              order.status === 'new'
+                ? 'border-zinc-900 bg-zinc-900 text-white hover:bg-zinc-800'
+                : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-400 hover:text-zinc-900'
+            }`}
+          >
+            {order.status === 'new' ? (
+              <>
+                <Check className="h-3.5 w-3.5" />
+                <span>{quickSaving ? 'Đang lưu...' : 'Đã xử lý'}</span>
+              </>
+            ) : (
+              <>
+                <RotateCcw className="h-3.5 w-3.5" />
+                <span>{quickSaving ? 'Đang lưu...' : 'Chưa xử lý'}</span>
+              </>
+            )}
+          </button>
         </div>
-      </button>
+      </div>
 
       {expanded && (
         <div className="space-y-4 border-t border-zinc-200 px-4 py-4">
           {/* Customer & Items */}
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1 text-xs text-zinc-600">
-              <p className="font-semibold text-zinc-900">Thông tin giao hàng</p>
+              <p className="font-semibold text-zinc-900">Thông tin nhận hàng</p>
               <p>Người nhận: {order.customerName}</p>
               <p>
                 SĐT:{' '}
@@ -190,32 +240,31 @@ function OrderRow({
             </div>
           </div>
 
-          {/* Update Controls (F8) */}
-          <div className="grid gap-3 border-t border-zinc-100 pt-4 sm:grid-cols-3">
+          {/* Update Controls: 2 statuses + internal note only */}
+          <div className="grid gap-3 border-t border-zinc-100 pt-4 sm:grid-cols-2">
             <div>
               <label className="mb-1 block text-xs font-medium text-zinc-700">Trạng thái đơn</label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value as OrderStatus)}
-                className="min-h-[42px] w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 outline-none focus:border-zinc-900"
-              >
-                {(Object.keys(ORDER_STATUS_LABELS) as OrderStatus[]).map((key) => (
-                  <option key={key} value={key}>
-                    {ORDER_STATUS_LABELS[key]}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="mb-1 block text-xs font-medium text-zinc-700">Mã vận đơn</label>
-              <input
-                type="text"
-                value={trackingCode}
-                onChange={(e) => setTrackingCode(e.target.value)}
-                placeholder="VD: GHTK849201"
-                className="min-h-[42px] w-full rounded-lg border border-zinc-300 bg-white px-3 font-mono text-sm text-zinc-900 outline-none focus:border-zinc-900"
-              />
+              <div className="grid grid-cols-2 gap-2">
+                {ORDER_FILTERS.map((opt) => {
+                  const active = status === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setStatus(opt.value)}
+                      className={`min-h-[42px] rounded-lg border px-3 text-xs font-semibold transition-colors ${
+                        active
+                          ? opt.value === 'completed'
+                            ? 'border-emerald-700 bg-emerald-700 text-white'
+                            : 'border-zinc-900 bg-zinc-900 text-white'
+                          : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-400 hover:text-zinc-900'
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             <div>
@@ -226,7 +275,7 @@ function OrderRow({
                 type="text"
                 value={adminNote}
                 onChange={(e) => setAdminNote(e.target.value)}
-                placeholder="Đã thu CK, đợi bưu tá lấy..."
+                placeholder="VD: Đã liên hệ chốt đơn, đã chuyển khoản..."
                 className="min-h-[42px] w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 outline-none focus:border-zinc-900"
               />
             </div>
@@ -594,9 +643,12 @@ export function ShopAdminPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Order filters (F8 — default to unfinished orders)
-  const [orderFilter, setOrderFilter] = useState<OrderFilter>('unfinished');
+  // Order filters — 2 categories: 'new' (Chưa xử lý) & 'completed' (Đã xử lý)
+  const [orderFilter, setOrderFilter] = useState<OrderStatus>('new');
   const [orderSearch, setOrderSearch] = useState('');
+  const [selectedOrderIds, setSelectedOrderIds] = useState<Set<string>>(() => new Set());
+  const [bulkSaving, setBulkSaving] = useState(false);
+  const selectAllRef = useRef<HTMLInputElement | null>(null);
 
   // Product modal
   const [productModalOpen, setProductModalOpen] = useState(false);
@@ -630,13 +682,7 @@ export function ShopAdminPage() {
   const filteredOrders = useMemo(() => {
     const q = orderSearch.trim().toLowerCase();
     return orders.filter((o) => {
-      const matchesFilter =
-        orderFilter === 'all'
-          ? true
-          : orderFilter === 'unfinished'
-            ? UNFINISHED_STATUSES.includes(o.status)
-            : o.status === orderFilter;
-      if (!matchesFilter) return false;
+      if (o.status !== orderFilter) return false;
       if (!q) return true;
       return (
         o.orderCode.toLowerCase().includes(q) ||
@@ -648,18 +694,59 @@ export function ShopAdminPage() {
   }, [orders, orderFilter, orderSearch]);
 
   const orderStats = useMemo(() => {
-    let unfinished = 0;
-    let newlyPlaced = 0;
-    let shipping = 0;
-    let completed = 0;
+    let unprocessed = 0;
+    let processed = 0;
     for (const o of orders) {
-      if (UNFINISHED_STATUSES.includes(o.status)) unfinished += 1;
-      if (o.status === 'new') newlyPlaced += 1;
-      if (o.status === 'shipping') shipping += 1;
-      if (o.status === 'completed') completed += 1;
+      if (o.status === 'completed') processed += 1;
+      else unprocessed += 1;
     }
-    return { unfinished, newlyPlaced, shipping, completed };
+    return { unprocessed, processed };
   }, [orders]);
+
+  const visibleSelectedIds = useMemo(
+    () => filteredOrders.filter((o) => selectedOrderIds.has(o.id)).map((o) => o.id),
+    [filteredOrders, selectedOrderIds]
+  );
+
+  const allVisibleSelected =
+    filteredOrders.length > 0 && visibleSelectedIds.length === filteredOrders.length;
+  const someVisibleSelected = visibleSelectedIds.length > 0 && !allVisibleSelected;
+
+  useEffect(() => {
+    if (selectAllRef.current) {
+      selectAllRef.current.indeterminate = someVisibleSelected;
+    }
+  }, [someVisibleSelected]);
+
+  const handleChangeOrderFilter = (next: OrderStatus) => {
+    setOrderFilter(next);
+    setSelectedOrderIds(new Set());
+  };
+
+  const handleToggleSelectOrder = (orderId: string) => {
+    setSelectedOrderIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(orderId)) next.delete(orderId);
+      else next.add(orderId);
+      return next;
+    });
+  };
+
+  const handleToggleSelectAllVisible = () => {
+    if (allVisibleSelected) {
+      setSelectedOrderIds((prev) => {
+        const next = new Set(prev);
+        for (const o of filteredOrders) next.delete(o.id);
+        return next;
+      });
+    } else {
+      setSelectedOrderIds((prev) => {
+        const next = new Set(prev);
+        for (const o of filteredOrders) next.add(o.id);
+        return next;
+      });
+    }
+  };
 
   const { navigate } = useRouter();
 
@@ -681,11 +768,66 @@ export function ShopAdminPage() {
 
   const handleSaveOrder = async (
     orderId: string,
-    payload: { status: OrderStatus; trackingCode: string; adminNote: string }
+    payload: { status: OrderStatus; adminNote: string }
   ) => {
     const res = await api.updateOrder(shopId, orderId, payload);
     setOrders((prev) => prev.map((o) => (o.id === orderId ? res.order : o)));
+    setSelectedOrderIds((prev) => {
+      if (!prev.has(orderId)) return prev;
+      const next = new Set(prev);
+      next.delete(orderId);
+      return next;
+    });
     showToast(`Đã cập nhật đơn ${res.order.orderCode}`);
+  };
+
+  const handleQuickOrderStatus = async (orderId: string, nextStatus: OrderStatus) => {
+    try {
+      const res = await api.updateOrder(shopId, orderId, { status: nextStatus });
+      setOrders((prev) => prev.map((o) => (o.id === orderId ? res.order : o)));
+      setSelectedOrderIds((prev) => {
+        if (!prev.has(orderId)) return prev;
+        const next = new Set(prev);
+        next.delete(orderId);
+        return next;
+      });
+      showToast(
+        nextStatus === 'completed'
+          ? `Đã chuyển đơn ${res.order.orderCode} sang Đã xử lý`
+          : `Đã chuyển đơn ${res.order.orderCode} về Chưa xử lý`
+      );
+    } catch (err: unknown) {
+      showToast(
+        err instanceof Error ? err.message : 'Không thể đổi trạng thái đơn hàng.',
+        'error'
+      );
+    }
+  };
+
+  const handleBulkUpdateStatus = async (nextStatus: OrderStatus) => {
+    if (visibleSelectedIds.length === 0) return;
+    setBulkSaving(true);
+    try {
+      const res = await api.bulkUpdateOrderStatus(shopId, {
+        orderIds: visibleSelectedIds,
+        status: nextStatus,
+      });
+      const updatedMap = new Map(res.orders.map((o) => [o.id, o]));
+      setOrders((prev) => prev.map((o) => updatedMap.get(o.id) ?? o));
+      setSelectedOrderIds(new Set());
+      showToast(
+        nextStatus === 'completed'
+          ? `Đã đánh dấu ${res.updatedCount} đơn là Đã xử lý`
+          : `Đã chuyển ${res.updatedCount} đơn về Chưa xử lý`
+      );
+    } catch (err: unknown) {
+      showToast(
+        err instanceof Error ? err.message : 'Không thể cập nhật hàng loạt đơn hàng.',
+        'error'
+      );
+    } finally {
+      setBulkSaving(false);
+    }
   };
 
   const handleSaveProduct = async (payload: {
@@ -777,7 +919,7 @@ export function ShopAdminPage() {
                   : 'text-zinc-600 hover:text-zinc-900'
               }`}
             >
-              Đơn hàng ({orderStats.unfinished} chưa xong)
+              Đơn hàng ({orderStats.unprocessed} chưa xử lý)
             </button>
             <button
               type="button"
@@ -823,51 +965,57 @@ export function ShopAdminPage() {
           <AgentEventsPanel shopId={shopId} shopSlug={shopSlug} />
         ) : tab === 'orders' ? (
           <section className="mt-6 space-y-5">
-            {/* 4-column metric strip */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <div className="rounded-xl border border-zinc-200 bg-white p-4">
-                <p className="text-xs text-zinc-500">Chưa xử lý xong</p>
-                <p className="mt-1 font-mono text-2xl font-bold tabular-nums text-zinc-900">
-                  {orderStats.unfinished}
-                </p>
-              </div>
-              <div className="rounded-xl border border-zinc-200 bg-white p-4">
-                <p className="text-xs text-zinc-500">Mới đặt</p>
+            {/* 2-column clickable status summary */}
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => handleChangeOrderFilter('new')}
+                className={`rounded-xl border p-4 text-left transition-colors ${
+                  orderFilter === 'new'
+                    ? 'border-zinc-900 bg-white ring-1 ring-zinc-900/10'
+                    : 'border-zinc-200 bg-white hover:border-zinc-300'
+                }`}
+              >
+                <p className="text-xs font-medium text-zinc-500">Chưa xử lý</p>
                 <p className="mt-1 font-mono text-2xl font-bold tabular-nums text-amber-700">
-                  {orderStats.newlyPlaced}
+                  {orderStats.unprocessed}
                 </p>
-              </div>
-              <div className="rounded-xl border border-zinc-200 bg-white p-4">
-                <p className="text-xs text-zinc-500">Đang giao</p>
-                <p className="mt-1 font-mono text-2xl font-bold tabular-nums text-indigo-700">
-                  {orderStats.shipping}
-                </p>
-              </div>
-              <div className="rounded-xl border border-zinc-200 bg-white p-4">
-                <p className="text-xs text-zinc-500">Hoàn tất</p>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleChangeOrderFilter('completed')}
+                className={`rounded-xl border p-4 text-left transition-colors ${
+                  orderFilter === 'completed'
+                    ? 'border-zinc-900 bg-white ring-1 ring-zinc-900/10'
+                    : 'border-zinc-200 bg-white hover:border-zinc-300'
+                }`}
+              >
+                <p className="text-xs font-medium text-zinc-500">Đã xử lý</p>
                 <p className="mt-1 font-mono text-2xl font-bold tabular-nums text-emerald-700">
-                  {orderStats.completed}
+                  {orderStats.processed}
                 </p>
-              </div>
+              </button>
             </div>
 
-            {/* Filter bar & Search */}
+            {/* 2-tab Filter bar & Search */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-wrap gap-1.5">
                 {ORDER_FILTERS.map((f) => {
                   const active = orderFilter === f.value;
+                  const count =
+                    f.value === 'new' ? orderStats.unprocessed : orderStats.processed;
                   return (
                     <button
                       key={f.value}
                       type="button"
-                      onClick={() => setOrderFilter(f.value)}
-                      className={`min-h-[38px] whitespace-nowrap rounded-lg border px-3 text-xs font-medium transition-colors ${
+                      onClick={() => handleChangeOrderFilter(f.value)}
+                      className={`min-h-[38px] whitespace-nowrap rounded-lg border px-3.5 text-xs font-semibold transition-colors ${
                         active
                           ? 'border-zinc-900 bg-zinc-900 text-white'
                           : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-400 hover:text-zinc-900'
                       }`}
                     >
-                      {f.label}
+                      {f.label} ({count})
                     </button>
                   );
                 })}
@@ -885,18 +1033,101 @@ export function ShopAdminPage() {
               </div>
             </div>
 
+            {/* Bulk selection & action bar */}
+            {filteredOrders.length > 0 && (
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-2.5">
+                <label className="flex cursor-pointer items-center gap-2.5 text-xs font-medium text-zinc-800 select-none">
+                  <input
+                    ref={selectAllRef}
+                    type="checkbox"
+                    checked={allVisibleSelected}
+                    onChange={handleToggleSelectAllVisible}
+                    className="h-4 w-4 cursor-pointer rounded border-zinc-300 accent-zinc-900"
+                  />
+                  <span>
+                    {visibleSelectedIds.length > 0
+                      ? `Đã chọn ${visibleSelectedIds.length}/${filteredOrders.length} đơn`
+                      : `Chọn tất cả (${filteredOrders.length} đơn)`}
+                  </span>
+                </label>
+
+                {visibleSelectedIds.length > 0 ? (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedOrderIds(new Set())}
+                      disabled={bulkSaving}
+                      className="min-h-[36px] rounded-lg border border-zinc-200 px-3 text-xs font-medium text-zinc-600 hover:bg-zinc-50 disabled:opacity-50"
+                    >
+                      Bỏ chọn
+                    </button>
+                    {orderFilter === 'new' ? (
+                      <button
+                        type="button"
+                        disabled={bulkSaving}
+                        onClick={() => handleBulkUpdateStatus('completed')}
+                        className="inline-flex min-h-[36px] items-center gap-1.5 rounded-lg bg-zinc-900 px-3.5 text-xs font-semibold text-white hover:bg-zinc-800 disabled:opacity-50"
+                      >
+                        <CheckCheck className="h-4 w-4" />
+                        <span>
+                          {bulkSaving
+                            ? 'Đang cập nhật...'
+                            : `Đánh dấu đã xử lý (${visibleSelectedIds.length})`}
+                        </span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled={bulkSaving}
+                        onClick={() => handleBulkUpdateStatus('new')}
+                        className="inline-flex min-h-[36px] items-center gap-1.5 rounded-lg border border-zinc-900 bg-white px-3.5 text-xs font-semibold text-zinc-900 hover:bg-zinc-50 disabled:opacity-50"
+                      >
+                        <RotateCcw className="h-3.5 w-3.5" />
+                        <span>
+                          {bulkSaving
+                            ? 'Đang cập nhật...'
+                            : `Chuyển về chưa xử lý (${visibleSelectedIds.length})`}
+                        </span>
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-xs text-zinc-400">
+                    Đánh tick chọn nhiều đơn để đổi trạng thái hàng loạt
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* Orders list */}
             {filteredOrders.length === 0 ? (
               <div className="rounded-xl border border-zinc-200 bg-white p-10 text-center">
-                <p className="text-sm font-medium text-zinc-900">Không có đơn hàng phù hợp</p>
+                <p className="text-sm font-medium text-zinc-900">
+                  {orderSearch.trim()
+                    ? 'Không tìm thấy đơn hàng phù hợp'
+                    : orderFilter === 'new'
+                      ? 'Không có đơn chưa xử lý'
+                      : 'Chưa có đơn hàng nào đã xử lý'}
+                </p>
                 <p className="mt-1 text-xs text-zinc-500">
-                  Thử đổi bộ lọc trạng thái hoặc từ khóa tìm kiếm.
+                  {orderSearch.trim()
+                    ? 'Thử đổi từ khóa tìm kiếm hoặc chuyển mục trạng thái.'
+                    : orderFilter === 'new'
+                      ? 'Tất cả đơn hàng hiện đã được xử lý xong.'
+                      : 'Các đơn sau khi đánh dấu đã xử lý sẽ hiển thị tại đây.'}
                 </p>
               </div>
             ) : (
               <div className="space-y-3">
                 {filteredOrders.map((order) => (
-                  <OrderRow key={order.id} order={order} onSave={handleSaveOrder} />
+                  <OrderRow
+                    key={order.id}
+                    order={order}
+                    selected={selectedOrderIds.has(order.id)}
+                    onToggleSelect={handleToggleSelectOrder}
+                    onQuickStatusChange={handleQuickOrderStatus}
+                    onSave={handleSaveOrder}
+                  />
                 ))}
               </div>
             )}

@@ -2,15 +2,16 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Pool, type PoolConfig } from 'pg';
-import type {
-  AgentDeliveryStatus,
-  AgentNotification,
-  AgentOrderPayload,
-  Order,
-  OrderItem,
-  OrderStatus,
-  Product,
-  Shop,
+import {
+  normalizeOrderStatus,
+  type AgentDeliveryStatus,
+  type AgentNotification,
+  type AgentOrderPayload,
+  type Order,
+  type OrderItem,
+  type OrderStatus,
+  type Product,
+  type Shop,
 } from '../src/shared/types.ts';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -320,7 +321,7 @@ class PostgresBridge {
           customerPhone: r.phone_or_contact,
           customerAddress: r.shipping_address,
           customerNote: r.customer_note ?? '',
-          status: r.status as OrderStatus,
+          status: normalizeOrderStatus(String(r.status ?? 'new')),
           trackingCode: r.tracking_code ?? '',
           adminNote: r.admin_note ?? '',
           totalAmount: Number(r.total_amount) || 0,
@@ -591,6 +592,33 @@ class PostgresBridge {
     } catch (err) {
       console.error(
         'PostgreSQL updateOrderStatus failed:',
+        err instanceof Error ? err.message : err
+      );
+      return false;
+    }
+  }
+
+  async bulkUpdateOrderStatus(params: {
+    shopSlug: string;
+    orderIds: string[];
+    status: OrderStatus;
+    updatedAt: string;
+  }): Promise<boolean> {
+    const ready = await this.ensureSchema();
+    const pool = this.getPool();
+    if (!ready || !pool || params.orderIds.length === 0) return false;
+
+    try {
+      await pool.query(
+        `UPDATE orders
+         SET status = $2, updated_at = $3::timestamptz
+         WHERE shop_slug = $1 AND id = ANY($4::text[])`,
+        [params.shopSlug.trim().toLowerCase(), params.status, params.updatedAt, params.orderIds]
+      );
+      return true;
+    } catch (err) {
+      console.error(
+        'PostgreSQL bulkUpdateOrderStatus failed:',
         err instanceof Error ? err.message : err
       );
       return false;
