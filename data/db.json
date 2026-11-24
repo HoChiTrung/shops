@@ -1,0 +1,929 @@
+{
+  "shops": [
+    {
+      "id": "shop_mam_tuithic",
+      "name": "tuithic studio",
+      "slug": "mam",
+      "orderPrefix": "MM",
+      "orderSeq": 3,
+      "messengerLink": "https://m.me/tuithicstudio",
+      "agentApiKey": "agk_7cfd6807f28556dbcb293c73c2689fed1f3b1aa56d306f56",
+      "isActive": true,
+      "createdAt": "2026-11-23T11:12:06.841Z"
+    }
+  ],
+  "users": [
+    {
+      "id": "usr_d0d5b6962b44",
+      "email": "admin@tuithic.studio",
+      "displayName": "Chủ hệ thống (Super Admin)",
+      "passwordHash": "fb3fbcb1481822eeba87ee36c913ee46:35cb88036d13abe89dfeac53e2e93a3d07916f0042c6fca1ce83dfd54f441ff2e780a5ca1df8027d8c710ff30b4680379e8fb99092e20897f92792eb970535f0",
+      "role": "super_admin",
+      "shopId": null,
+      "createdAt": "2026-11-23T03:10:55.566Z"
+    },
+    {
+      "id": "usr_58dad7c13667",
+      "email": "mam@tuithic.studio",
+      "displayName": "Mầm (tuithic studio)",
+      "passwordHash": "09716fb50a2351de58efbf1fc2d1ed29:09430104b45a108335b01269a321212b6bde532efe9fff149d12bba498483456bb1dcaca57e61af8c2a3f00592d46e5697e21fc028151a659234d913d3aa9c76",
+      "role": "shop_owner",
+      "shopId": "shop_mam_tuithic",
+      "createdAt": "2026-11-23T03:10:55.566Z"
+    },
+    {
+      "id": "usr_13799440d510",
+      "email": "admin",
+      "displayName": "Admin hệ thống",
+      "passwordHash": "57e7a40e8649725b7d65fe52f1b8437e:21ad9f7bf246bff3d432da578726304e33c76e8a497791efba9adbc0a8cf451f1976d8044b01e767c6bc1ada1fde58e70ae094d8990f2d32854fe745d4d14094",
+      "role": "super_admin",
+      "shopId": null,
+      "createdAt": "2026-11-23T10:11:40.217Z"
+    },
+    {
+      "id": "usr_5378ed3e9a2b",
+      "email": "mam",
+      "displayName": "Chủ shop tuithic studio",
+      "passwordHash": "6a13cd84c0535f4a25ccc011bf54acdf:73dfb58761292fc7ae8d4c5c88f0e5c4c77499af5b6c1987f7019826f056384d948958df61d3bb552992469bf9dff7b221c4c1876113220bd9b4d2c9d4c4d9ff",
+      "role": "shop_owner",
+      "shopId": "shop_mam_tuithic",
+      "createdAt": "2026-11-23T11:34:54.676Z"
+    }
+  ],
+  "products": [
+    {
+      "id": "prod_ao_boxy",
+      "shopId": "shop_mam_tuithic",
+      "name": "Áo thun Basic Boxy 250gsm",
+      "code": "AO",
+      "price": 249000,
+      "description": "Cotton 2 chiều dày dặn 250gsm, form boxy đứng dáng, mặc mát hằng ngày.",
+      "colors": [
+        {
+          "hex": "#F3EFE6",
+          "code": "KEM",
+          "name": "Trắng kem"
+        },
+        {
+          "hex": "#1F2937",
+          "code": "DEN",
+          "name": "Đen than"
+        },
+        {
+          "hex": "#2563EB",
+          "code": "XANH",
+          "name": "Xanh cobalt"
+        },
+        {
+          "hex": "#9CA3AF",
+          "code": "XAM",
+          "name": "Xám tiêu"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "isActive": true,
+      "createdAt": "2026-11-23T03:10:30.410Z"
+    },
+    {
+      "id": "prod_os_tron",
+      "shopId": "shop_mam_tuithic",
+      "name": "Áo thun Oversize Cổ Tròn",
+      "code": "OS",
+      "price": 279000,
+      "description": "Form rộng vai trễ thoải mái, bo cổ dày chống giãn sau nhiều lần giặt.",
+      "colors": [
+        {
+          "hex": "#111827",
+          "code": "DEN",
+          "name": "Đen tuyền"
+        },
+        {
+          "hex": "#F9FAFB",
+          "code": "TRANG",
+          "name": "Trắng tinh"
+        },
+        {
+          "hex": "#3F6212",
+          "code": "REU",
+          "name": "Xanh rêu"
+        },
+        {
+          "hex": "#78350F",
+          "code": "NAU",
+          "name": "Nâu đất"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "isActive": true,
+      "createdAt": "2026-11-23T03:10:30.410Z"
+    },
+    {
+      "id": "prod_rg_raglan",
+      "shopId": "shop_mam_tuithic",
+      "name": "Áo thun Raglan Tay Lỡ",
+      "code": "RG",
+      "price": 295000,
+      "description": "Thiết kế phối tay raglan trẻ trung, vải cotton mềm mịn thấm hút mồ hôi.",
+      "colors": [
+        {
+          "hex": "#1E3A8A",
+          "code": "NAVY",
+          "name": "Xanh navy"
+        },
+        {
+          "hex": "#991B1B",
+          "code": "DO",
+          "name": "Đỏ đô"
+        },
+        {
+          "hex": "#D6C7B2",
+          "code": "BE",
+          "name": "Be cát"
+        },
+        {
+          "hex": "#6B7280",
+          "code": "KHOI",
+          "name": "Xám khói"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "isActive": true,
+      "createdAt": "2026-11-23T03:10:30.410Z"
+    },
+    {
+      "id": "prod_bt_babytee",
+      "shopId": "shop_mam_tuithic",
+      "name": "Áo thun Baby Tee Nữ",
+      "code": "BT",
+      "price": 225000,
+      "description": "Form ôm nhẹ tôn dáng, chất cotton co giãn 4 chiều thoáng mát.",
+      "colors": [
+        {
+          "hex": "#FDFBF7",
+          "code": "SUA",
+          "name": "Trắng sữa"
+        },
+        {
+          "hex": "#F472B6",
+          "code": "HONG",
+          "name": "Hồng phấn"
+        },
+        {
+          "hex": "#60A5FA",
+          "code": "BIEN",
+          "name": "Xanh biển"
+        },
+        {
+          "hex": "#18181B",
+          "code": "DEN",
+          "name": "Đen"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L"
+      ],
+      "isActive": true,
+      "createdAt": "2026-11-23T03:10:30.410Z"
+    }
+  ],
+  "variants": [
+    {
+      "id": "var_e16da8c050de",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_ao_boxy",
+      "colorName": "Trắng kem",
+      "colorCode": "KEM",
+      "colorHex": "#F3EFE6",
+      "size": "S",
+      "sku": "AO-KEM-S",
+      "isActive": true
+    },
+    {
+      "id": "var_7ff08fb5bb11",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_ao_boxy",
+      "colorName": "Trắng kem",
+      "colorCode": "KEM",
+      "colorHex": "#F3EFE6",
+      "size": "M",
+      "sku": "AO-KEM-M",
+      "isActive": true
+    },
+    {
+      "id": "var_b01a33dab77a",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_ao_boxy",
+      "colorName": "Trắng kem",
+      "colorCode": "KEM",
+      "colorHex": "#F3EFE6",
+      "size": "L",
+      "sku": "AO-KEM-L",
+      "isActive": true
+    },
+    {
+      "id": "var_bebf58474504",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_ao_boxy",
+      "colorName": "Trắng kem",
+      "colorCode": "KEM",
+      "colorHex": "#F3EFE6",
+      "size": "XL",
+      "sku": "AO-KEM-XL",
+      "isActive": true
+    },
+    {
+      "id": "var_91090b4ad832",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_ao_boxy",
+      "colorName": "Đen than",
+      "colorCode": "DEN",
+      "colorHex": "#1F2937",
+      "size": "S",
+      "sku": "AO-DEN-S",
+      "isActive": true
+    },
+    {
+      "id": "var_519998ab407b",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_ao_boxy",
+      "colorName": "Đen than",
+      "colorCode": "DEN",
+      "colorHex": "#1F2937",
+      "size": "M",
+      "sku": "AO-DEN-M",
+      "isActive": true
+    },
+    {
+      "id": "var_992b60d27b2f",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_ao_boxy",
+      "colorName": "Đen than",
+      "colorCode": "DEN",
+      "colorHex": "#1F2937",
+      "size": "L",
+      "sku": "AO-DEN-L",
+      "isActive": true
+    },
+    {
+      "id": "var_001671b7fd4f",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_ao_boxy",
+      "colorName": "Đen than",
+      "colorCode": "DEN",
+      "colorHex": "#1F2937",
+      "size": "XL",
+      "sku": "AO-DEN-XL",
+      "isActive": true
+    },
+    {
+      "id": "var_fd647d4dfe67",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_ao_boxy",
+      "colorName": "Xanh cobalt",
+      "colorCode": "XANH",
+      "colorHex": "#2563EB",
+      "size": "S",
+      "sku": "AO-XANH-S",
+      "isActive": true
+    },
+    {
+      "id": "var_4bf9e5559315",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_ao_boxy",
+      "colorName": "Xanh cobalt",
+      "colorCode": "XANH",
+      "colorHex": "#2563EB",
+      "size": "M",
+      "sku": "AO-XANH-M",
+      "isActive": true
+    },
+    {
+      "id": "var_f8ed92d6c688",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_ao_boxy",
+      "colorName": "Xanh cobalt",
+      "colorCode": "XANH",
+      "colorHex": "#2563EB",
+      "size": "L",
+      "sku": "AO-XANH-L",
+      "isActive": true
+    },
+    {
+      "id": "var_65f293c25679",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_ao_boxy",
+      "colorName": "Xanh cobalt",
+      "colorCode": "XANH",
+      "colorHex": "#2563EB",
+      "size": "XL",
+      "sku": "AO-XANH-XL",
+      "isActive": true
+    },
+    {
+      "id": "var_6c500ea34b29",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_ao_boxy",
+      "colorName": "Xám tiêu",
+      "colorCode": "XAM",
+      "colorHex": "#9CA3AF",
+      "size": "S",
+      "sku": "AO-XAM-S",
+      "isActive": true
+    },
+    {
+      "id": "var_660a007f4d7c",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_ao_boxy",
+      "colorName": "Xám tiêu",
+      "colorCode": "XAM",
+      "colorHex": "#9CA3AF",
+      "size": "M",
+      "sku": "AO-XAM-M",
+      "isActive": true
+    },
+    {
+      "id": "var_5a36ad665811",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_ao_boxy",
+      "colorName": "Xám tiêu",
+      "colorCode": "XAM",
+      "colorHex": "#9CA3AF",
+      "size": "L",
+      "sku": "AO-XAM-L",
+      "isActive": true
+    },
+    {
+      "id": "var_c5cd48ace7d4",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_ao_boxy",
+      "colorName": "Xám tiêu",
+      "colorCode": "XAM",
+      "colorHex": "#9CA3AF",
+      "size": "XL",
+      "sku": "AO-XAM-XL",
+      "isActive": true
+    },
+    {
+      "id": "var_e89baa8e9753",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_os_tron",
+      "colorName": "Đen tuyền",
+      "colorCode": "DEN",
+      "colorHex": "#111827",
+      "size": "S",
+      "sku": "OS-DEN-S",
+      "isActive": true
+    },
+    {
+      "id": "var_e5062c90e101",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_os_tron",
+      "colorName": "Đen tuyền",
+      "colorCode": "DEN",
+      "colorHex": "#111827",
+      "size": "M",
+      "sku": "OS-DEN-M",
+      "isActive": true
+    },
+    {
+      "id": "var_ab55e3b974c8",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_os_tron",
+      "colorName": "Đen tuyền",
+      "colorCode": "DEN",
+      "colorHex": "#111827",
+      "size": "L",
+      "sku": "OS-DEN-L",
+      "isActive": true
+    },
+    {
+      "id": "var_ce6ef76cfa2a",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_os_tron",
+      "colorName": "Đen tuyền",
+      "colorCode": "DEN",
+      "colorHex": "#111827",
+      "size": "XL",
+      "sku": "OS-DEN-XL",
+      "isActive": true
+    },
+    {
+      "id": "var_76546e23a2f5",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_os_tron",
+      "colorName": "Trắng tinh",
+      "colorCode": "TRANG",
+      "colorHex": "#F9FAFB",
+      "size": "S",
+      "sku": "OS-TRANG-S",
+      "isActive": true
+    },
+    {
+      "id": "var_ef69c7a8af73",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_os_tron",
+      "colorName": "Trắng tinh",
+      "colorCode": "TRANG",
+      "colorHex": "#F9FAFB",
+      "size": "M",
+      "sku": "OS-TRANG-M",
+      "isActive": true
+    },
+    {
+      "id": "var_382ad8c44702",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_os_tron",
+      "colorName": "Trắng tinh",
+      "colorCode": "TRANG",
+      "colorHex": "#F9FAFB",
+      "size": "L",
+      "sku": "OS-TRANG-L",
+      "isActive": true
+    },
+    {
+      "id": "var_0c7e2f4baf0d",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_os_tron",
+      "colorName": "Trắng tinh",
+      "colorCode": "TRANG",
+      "colorHex": "#F9FAFB",
+      "size": "XL",
+      "sku": "OS-TRANG-XL",
+      "isActive": true
+    },
+    {
+      "id": "var_0b27b054dba5",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_os_tron",
+      "colorName": "Xanh rêu",
+      "colorCode": "REU",
+      "colorHex": "#3F6212",
+      "size": "S",
+      "sku": "OS-REU-S",
+      "isActive": true
+    },
+    {
+      "id": "var_e681eb6f7874",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_os_tron",
+      "colorName": "Xanh rêu",
+      "colorCode": "REU",
+      "colorHex": "#3F6212",
+      "size": "M",
+      "sku": "OS-REU-M",
+      "isActive": true
+    },
+    {
+      "id": "var_e53688bb8391",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_os_tron",
+      "colorName": "Xanh rêu",
+      "colorCode": "REU",
+      "colorHex": "#3F6212",
+      "size": "L",
+      "sku": "OS-REU-L",
+      "isActive": true
+    },
+    {
+      "id": "var_b28e3abf0fd3",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_os_tron",
+      "colorName": "Xanh rêu",
+      "colorCode": "REU",
+      "colorHex": "#3F6212",
+      "size": "XL",
+      "sku": "OS-REU-XL",
+      "isActive": true
+    },
+    {
+      "id": "var_ebcd350c0d09",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_os_tron",
+      "colorName": "Nâu đất",
+      "colorCode": "NAU",
+      "colorHex": "#78350F",
+      "size": "S",
+      "sku": "OS-NAU-S",
+      "isActive": true
+    },
+    {
+      "id": "var_657b2986cd6d",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_os_tron",
+      "colorName": "Nâu đất",
+      "colorCode": "NAU",
+      "colorHex": "#78350F",
+      "size": "M",
+      "sku": "OS-NAU-M",
+      "isActive": true
+    },
+    {
+      "id": "var_b9a4127d5e6a",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_os_tron",
+      "colorName": "Nâu đất",
+      "colorCode": "NAU",
+      "colorHex": "#78350F",
+      "size": "L",
+      "sku": "OS-NAU-L",
+      "isActive": true
+    },
+    {
+      "id": "var_a34961ce88fb",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_os_tron",
+      "colorName": "Nâu đất",
+      "colorCode": "NAU",
+      "colorHex": "#78350F",
+      "size": "XL",
+      "sku": "OS-NAU-XL",
+      "isActive": true
+    },
+    {
+      "id": "var_13e6d225dbe3",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_rg_raglan",
+      "colorName": "Xanh navy",
+      "colorCode": "NAVY",
+      "colorHex": "#1E3A8A",
+      "size": "S",
+      "sku": "RG-NAVY-S",
+      "isActive": true
+    },
+    {
+      "id": "var_76a11ee47ea1",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_rg_raglan",
+      "colorName": "Xanh navy",
+      "colorCode": "NAVY",
+      "colorHex": "#1E3A8A",
+      "size": "M",
+      "sku": "RG-NAVY-M",
+      "isActive": true
+    },
+    {
+      "id": "var_29551a0dfaf5",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_rg_raglan",
+      "colorName": "Xanh navy",
+      "colorCode": "NAVY",
+      "colorHex": "#1E3A8A",
+      "size": "L",
+      "sku": "RG-NAVY-L",
+      "isActive": true
+    },
+    {
+      "id": "var_02f73d258f09",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_rg_raglan",
+      "colorName": "Xanh navy",
+      "colorCode": "NAVY",
+      "colorHex": "#1E3A8A",
+      "size": "XL",
+      "sku": "RG-NAVY-XL",
+      "isActive": true
+    },
+    {
+      "id": "var_dbcda671b2a5",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_rg_raglan",
+      "colorName": "Đỏ đô",
+      "colorCode": "DO",
+      "colorHex": "#991B1B",
+      "size": "S",
+      "sku": "RG-DO-S",
+      "isActive": true
+    },
+    {
+      "id": "var_7e524c61a7c8",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_rg_raglan",
+      "colorName": "Đỏ đô",
+      "colorCode": "DO",
+      "colorHex": "#991B1B",
+      "size": "M",
+      "sku": "RG-DO-M",
+      "isActive": true
+    },
+    {
+      "id": "var_e3c439d1501b",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_rg_raglan",
+      "colorName": "Đỏ đô",
+      "colorCode": "DO",
+      "colorHex": "#991B1B",
+      "size": "L",
+      "sku": "RG-DO-L",
+      "isActive": true
+    },
+    {
+      "id": "var_e4b0ba805594",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_rg_raglan",
+      "colorName": "Đỏ đô",
+      "colorCode": "DO",
+      "colorHex": "#991B1B",
+      "size": "XL",
+      "sku": "RG-DO-XL",
+      "isActive": true
+    },
+    {
+      "id": "var_403fc256ca8f",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_rg_raglan",
+      "colorName": "Be cát",
+      "colorCode": "BE",
+      "colorHex": "#D6C7B2",
+      "size": "S",
+      "sku": "RG-BE-S",
+      "isActive": true
+    },
+    {
+      "id": "var_5c7fbf502f8e",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_rg_raglan",
+      "colorName": "Be cát",
+      "colorCode": "BE",
+      "colorHex": "#D6C7B2",
+      "size": "M",
+      "sku": "RG-BE-M",
+      "isActive": true
+    },
+    {
+      "id": "var_67a747cd344b",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_rg_raglan",
+      "colorName": "Be cát",
+      "colorCode": "BE",
+      "colorHex": "#D6C7B2",
+      "size": "L",
+      "sku": "RG-BE-L",
+      "isActive": true
+    },
+    {
+      "id": "var_dc954a989051",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_rg_raglan",
+      "colorName": "Be cát",
+      "colorCode": "BE",
+      "colorHex": "#D6C7B2",
+      "size": "XL",
+      "sku": "RG-BE-XL",
+      "isActive": true
+    },
+    {
+      "id": "var_5c80df20b13f",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_rg_raglan",
+      "colorName": "Xám khói",
+      "colorCode": "KHOI",
+      "colorHex": "#6B7280",
+      "size": "S",
+      "sku": "RG-KHOI-S",
+      "isActive": true
+    },
+    {
+      "id": "var_25556273f36d",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_rg_raglan",
+      "colorName": "Xám khói",
+      "colorCode": "KHOI",
+      "colorHex": "#6B7280",
+      "size": "M",
+      "sku": "RG-KHOI-M",
+      "isActive": true
+    },
+    {
+      "id": "var_c88863eded41",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_rg_raglan",
+      "colorName": "Xám khói",
+      "colorCode": "KHOI",
+      "colorHex": "#6B7280",
+      "size": "L",
+      "sku": "RG-KHOI-L",
+      "isActive": true
+    },
+    {
+      "id": "var_9d07a1680e42",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_rg_raglan",
+      "colorName": "Xám khói",
+      "colorCode": "KHOI",
+      "colorHex": "#6B7280",
+      "size": "XL",
+      "sku": "RG-KHOI-XL",
+      "isActive": true
+    },
+    {
+      "id": "var_9535d622fc5c",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_bt_babytee",
+      "colorName": "Trắng sữa",
+      "colorCode": "SUA",
+      "colorHex": "#FDFBF7",
+      "size": "S",
+      "sku": "BT-SUA-S",
+      "isActive": true
+    },
+    {
+      "id": "var_99430e7dd7b8",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_bt_babytee",
+      "colorName": "Trắng sữa",
+      "colorCode": "SUA",
+      "colorHex": "#FDFBF7",
+      "size": "M",
+      "sku": "BT-SUA-M",
+      "isActive": true
+    },
+    {
+      "id": "var_7c3394770e7d",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_bt_babytee",
+      "colorName": "Trắng sữa",
+      "colorCode": "SUA",
+      "colorHex": "#FDFBF7",
+      "size": "L",
+      "sku": "BT-SUA-L",
+      "isActive": true
+    },
+    {
+      "id": "var_495098ae4084",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_bt_babytee",
+      "colorName": "Hồng phấn",
+      "colorCode": "HONG",
+      "colorHex": "#F472B6",
+      "size": "S",
+      "sku": "BT-HONG-S",
+      "isActive": true
+    },
+    {
+      "id": "var_b6450065d5af",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_bt_babytee",
+      "colorName": "Hồng phấn",
+      "colorCode": "HONG",
+      "colorHex": "#F472B6",
+      "size": "M",
+      "sku": "BT-HONG-M",
+      "isActive": true
+    },
+    {
+      "id": "var_de036cdf6fa6",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_bt_babytee",
+      "colorName": "Hồng phấn",
+      "colorCode": "HONG",
+      "colorHex": "#F472B6",
+      "size": "L",
+      "sku": "BT-HONG-L",
+      "isActive": true
+    },
+    {
+      "id": "var_fe5ad1c38e2b",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_bt_babytee",
+      "colorName": "Xanh biển",
+      "colorCode": "BIEN",
+      "colorHex": "#60A5FA",
+      "size": "S",
+      "sku": "BT-BIEN-S",
+      "isActive": true
+    },
+    {
+      "id": "var_f918a6722991",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_bt_babytee",
+      "colorName": "Xanh biển",
+      "colorCode": "BIEN",
+      "colorHex": "#60A5FA",
+      "size": "M",
+      "sku": "BT-BIEN-M",
+      "isActive": true
+    },
+    {
+      "id": "var_c324f2075902",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_bt_babytee",
+      "colorName": "Xanh biển",
+      "colorCode": "BIEN",
+      "colorHex": "#60A5FA",
+      "size": "L",
+      "sku": "BT-BIEN-L",
+      "isActive": true
+    },
+    {
+      "id": "var_3bbd6efd6ae9",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_bt_babytee",
+      "colorName": "Đen",
+      "colorCode": "DEN",
+      "colorHex": "#18181B",
+      "size": "S",
+      "sku": "BT-DEN-S",
+      "isActive": true
+    },
+    {
+      "id": "var_95cd5ca01f60",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_bt_babytee",
+      "colorName": "Đen",
+      "colorCode": "DEN",
+      "colorHex": "#18181B",
+      "size": "M",
+      "sku": "BT-DEN-M",
+      "isActive": true
+    },
+    {
+      "id": "var_d9e5243833f8",
+      "shopId": "shop_mam_tuithic",
+      "productId": "prod_bt_babytee",
+      "colorName": "Đen",
+      "colorCode": "DEN",
+      "colorHex": "#18181B",
+      "size": "L",
+      "sku": "BT-DEN-L",
+      "isActive": true
+    }
+  ],
+  "orders": [
+    {
+      "id": "ord_70da602d8bcf",
+      "shopId": "shop_mam_tuithic",
+      "orderCode": "MM0003",
+      "customerName": "dfsdfs",
+      "customerPhone": "0327891577",
+      "customerAddress": "fsdfsdf",
+      "customerNote": "",
+      "status": "new",
+      "trackingCode": "",
+      "adminNote": "",
+      "totalAmount": 249000,
+      "messengerText": "ĐƠN HÀNG MỚI #MM0003 — tuithic studio\n--------------------\nSản phẩm:\n1. AO-KEM-S | Áo thun Basic Boxy 250gsm (Trắng kem / S) x1 = 249.000đ\n--------------------\nTổng cộng: 249.000đ\nKhách hàng: dfsdfs\nSĐT: 0327891577\nĐịa chỉ: fsdfsdf\nTra cứu đơn: https://ais-dev-wbmzehjcaffwaildrhojno-80467705616.asia-east1.run.app/mam/tra-cuu",
+      "createdAt": "2026-11-23T09:39:26.870Z",
+      "updatedAt": "2026-11-23T09:39:26.870Z"
+    }
+  ],
+  "orderItems": [
+    {
+      "id": "oi_64f63558c85d",
+      "sku": "AO-KEM-S",
+      "size": "S",
+      "shopId": "shop_mam_tuithic",
+      "orderId": "ord_70da602d8bcf",
+      "colorHex": "#F3EFE6",
+      "quantity": 1,
+      "colorName": "Trắng kem",
+      "lineTotal": 249000,
+      "productId": "prod_ao_boxy",
+      "unitPrice": 249000,
+      "variantId": "var_e16da8c050de",
+      "productName": "Áo thun Basic Boxy 250gsm"
+    }
+  ],
+  "agentNotifications": [
+    {
+      "id": "an_9e2b56fb6dae",
+      "notificationId": "notif_8436c6f30d22c4ce",
+      "orderId": "ord_70da602d8bcf",
+      "shopSlug": "mam",
+      "payload": {
+        "event": "order.created",
+        "shop_slug": "mam",
+        "created_at": "2026-11-23T09:39:26.870Z",
+        "order_code": "MM0003",
+        "message_text": "ĐƠN HÀNG MỚI #MM0003 — tuithic studio\n--------------------\nSản phẩm:\n1. AO-KEM-S | Áo thun Basic Boxy 250gsm (Trắng kem / S) x1 = 249.000đ\n--------------------\nTổng cộng: 249.000đ\nKhách hàng: dfsdfs\nSĐT: 0327891577\nĐịa chỉ: fsdfsdf\nTra cứu đơn: https://ais-dev-wbmzehjcaffwaildrhojno-80467705616.asia-east1.run.app/mam/tra-cuu",
+        "total_amount": 249000,
+        "customer_name": "dfsdfs",
+        "items_summary": "AO-KEM-S (Trắng kem/S) x1",
+        "notification_id": "notif_8436c6f30d22c4ce",
+        "phone_or_contact": "0327891577"
+      },
+      "deliveryStatus": "pending",
+      "retryCount": 0,
+      "lastError": null,
+      "createdAt": "2026-11-23T09:39:26.870Z",
+      "deliveredAt": null,
+      "ackedAt": null
+    }
+  ]
+}
